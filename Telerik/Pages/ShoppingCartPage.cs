@@ -27,11 +27,21 @@ namespace Telerik.Pages
         [FindsBy(How = How.XPath, Using = "//div/span[contains(@class,'e2e-total-price')]")]
         protected IWebElement TotalPriceElement { get; set; }
 
-        [FindsBy(How = How.XPath, Using = "//products-table//table")]
-        protected IWebElement shoppingCartElement { get; set; }
-
-        [FindsBy(How = How.XPath, Using = "//table//tbody//tr//td[@class='product-name-cell']")]
+        [FindsBy(How = How.XPath, Using = "td.product-name-cell")]
         protected IList<IWebElement> shoppingCartElements { get; set; }
+
+
+        [FindsBy(How = How.CssSelector, Using = ".coupon-control-container .error-message")]
+        protected IWebElement CounponErrorMessageElement { get; set; }
+
+        [FindsBy(How = How.CssSelector, Using = ".coupon-control-container input")]
+        protected IWebElement CounponInputElement { get; set; }
+
+        [FindsBy(How = How.CssSelector, Using = ".coupon-control-container button")]
+        protected IWebElement CounponButtonElement { get; set; }
+
+        [FindsBy(How = How.XPath, Using = "//h2[contains(@class,'e2e-empty-shopping-cart-heading')]")]
+        protected IWebElement EmptyShoppingCartMessageElement { get; set; }
 
         private const string productNameLocator = "//div[normalize-space(text()) = '{0}']";
         private string yearlyPriceStringLocator = productNameLocator + "/ancestor::tr//td[@data-label = 'Maintenance & Support']//span[contains(@class, 'price-per-license-label')]";
@@ -72,6 +82,8 @@ namespace Telerik.Pages
                 product.SetYearlyDiscount();
             }
         }
+
+      
 
         public void SetQuantitiesForProducts()
         {
@@ -156,7 +168,8 @@ namespace Telerik.Pages
 
         public int GetProductCount()
         {
-            shoppingCartElements = driver.FindElements(By.XPath("//table//tbody//tr//td[@class='product-name-cell']"));
+            WaitUtil.WaitForLoaderToDisapear(driver);
+            shoppingCartElements = driver.FindElements(By.CssSelector("td.product-name-cell"));
             return shoppingCartElements.Count;
         }
 
@@ -167,6 +180,27 @@ namespace Telerik.Pages
             element.Click();
             Products.DeleteProductByName(product.ProductType);
 
+        }
+
+        public void AddCoupon(string coupon)
+        {
+            CounponInputElement.Clear();
+            CounponInputElement.SendKeys(coupon);
+        }
+
+        public void ClickCouponButton()
+        {
+            CounponButtonElement.Click();
+        }
+
+        public string GetCouponErrorMessage()
+        {
+            return CounponErrorMessageElement.Text.Trim();
+        }
+
+        public string GetEmptyShoppingCartMessage()
+        {
+            return EmptyShoppingCartMessageElement.Text.Trim();
         }
     }
 }

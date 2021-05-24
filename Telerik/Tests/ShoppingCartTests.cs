@@ -15,25 +15,10 @@ namespace Telerik.Tests
         PurchasePage purchasePage;
         ShoppingCartPage shoppingPage;
 
-        //ready
-      //  [Test]
-        public void AddSameProductToCartTwice()
-        {
-            purchasePage = new PurchasePage(driverUtils.GetDriver());
-            shoppingPage = new ShoppingCartPage(driverUtils.GetDriver());
 
-            Product product1 = new Product(ProductTypesEnum.Complete);
-            Product product2 = new Product(ProductTypesEnum.Complete);
-            ProductList productList = new ProductList(product1, product2);
-            purchasePage.AddProductsToCart(productList);
-            Assert.Equals(productList.getSize(), shoppingPage.GetProductCount());
-        }
-
-        //ready
-     //   [Test]
+       [Test]
         public void CheckDiscountsByAddingProductAndChangingQuantity()
         {
-
             purchasePage = new PurchasePage(driverUtils.GetDriver());
             shoppingPage = new ShoppingCartPage(driverUtils.GetDriver());
 
@@ -60,6 +45,20 @@ namespace Telerik.Tests
             Assert.AreEqual(productList.TotalDiscounts(), shoppingPage.actualProducts.TotalDiscounts);
             Assert.AreEqual(productList.TotalPriceAfterDiscounts(), shoppingPage.actualProducts.TotalPrice);
         }
+
+        [Test]
+        public void AddSameProductToCartTwice()
+        {
+            purchasePage = new PurchasePage(driverUtils.GetDriver());
+            shoppingPage = new ShoppingCartPage(driverUtils.GetDriver());
+
+            Product product1 = new Product(ProductTypesEnum.Complete);
+            Product product2 = new Product(ProductTypesEnum.Complete);
+            ProductList productList = new ProductList(product1, product2);
+            purchasePage.AddProductsToCart(productList);
+            Assert.AreEqual(1, shoppingPage.GetProductCount());
+        }
+
         [Test]
         public void RemoveProductFromCart()
         {
@@ -74,7 +73,35 @@ namespace Telerik.Tests
             shoppingPage.RemoveProduct(uiIProduct);
 
             Assert.AreEqual(productList.getSize(), shoppingPage.GetProductCount());
+        }
 
+       [Test]
+        public void AddInvalidCoupon()
+        {
+            purchasePage = new PurchasePage(driverUtils.GetDriver());
+            shoppingPage = new ShoppingCartPage(driverUtils.GetDriver());
+            Product ultimateProduct = new Product(ProductTypesEnum.Ultimate);
+            ProductList productList = new ProductList(ultimateProduct);
+            driverUtils.NavigateToUrl(AppSettingsReaderUtils.GetKey("urlShoppingCart"));
+            shoppingPage.AcceptCookies();
+            shoppingPage.AddCoupon("Discount50");
+            shoppingPage.ClickCouponButton();
+            Assert.AreEqual("Coupon code is not valid.", shoppingPage.GetCouponErrorMessage());
+
+        }
+        [Test]
+        public void EmptyShoppingCart()
+        {
+            purchasePage = new PurchasePage(driverUtils.GetDriver());
+            shoppingPage = new ShoppingCartPage(driverUtils.GetDriver());
+
+            Product uiIProduct = new Product(ProductTypesEnum.UI);
+            ProductList productList = new ProductList(uiIProduct);
+            purchasePage.AddProductsToCart(productList);
+            shoppingPage.Products = productList;
+            shoppingPage.RemoveProduct(uiIProduct);
+
+            Assert.AreEqual("Your shopping cart is empty!" ,shoppingPage.GetEmptyShoppingCartMessage());
         }
 
     }
