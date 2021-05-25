@@ -128,8 +128,8 @@ namespace Telerik.Pages
 
                 SetNewPricesForProducts(product);
 
-                SetAllCommonPricesForProducts();
             }
+            SetAllCommonPricesForProducts();
 
         }
 
