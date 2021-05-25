@@ -42,6 +42,11 @@ namespace Telerik.Pages
 
         [FindsBy(How = How.XPath, Using = "//h2[contains(@class,'e2e-empty-shopping-cart-heading')]")]
         protected IWebElement EmptyShoppingCartMessageElement { get; set; }
+     
+        [FindsBy(How = How.CssSelector, Using = "button.e2e-continue")]
+        protected IWebElement ContinueButtonElement { get; set; }
+
+  
 
         private const string productNameLocator = "//div[normalize-space(text()) = '{0}']";
         private string yearlyPriceStringLocator = productNameLocator + "/ancestor::tr//td[@data-label = 'Maintenance & Support']//span[contains(@class, 'price-per-license-label')]";
@@ -65,8 +70,6 @@ namespace Telerik.Pages
         public ShoppingCartPage(IWebDriver driver) : base(driver)
         {
             actualProducts = new ActualProducts();
-            PageFactory.InitElements(driver, this);
-
         }
 
 
@@ -74,7 +77,7 @@ namespace Telerik.Pages
         {
             foreach (var product in Products.GetProducts())
             {
-                string initalAutoRenewPriceText = common.GetWebElementByXpath(driver, ConcatText(initialAutoRenewalPriceStringLocator, product.GetName())).Text;
+                string initalAutoRenewPriceText = common.GetWebElementByXpath(driver, common.ConcatText(initialAutoRenewalPriceStringLocator, product.GetName())).Text;
                 string initalUnitPriceText = GetElementTextForProduct(unitPriceStringLocator, product); 
                 product.AutoRenewedInitalPrice = common.GetDoubleWithRegex(initalAutoRenewPriceText);
                 product.InitalUnitPrice = common.GetDoubleWithRegex(initalUnitPriceText);
@@ -92,27 +95,27 @@ namespace Telerik.Pages
             {
                 common.MoveToElement(driver, continueShoppingButton);
                 //unit
-                IWebElement kendoUnitPriceDropdownElement = common.GetWebElementByXpath(driver, ConcatText(kendoDropDownUnitPriceLocator, product.GetName()));
+                IWebElement kendoUnitPriceDropdownElement = common.GetWebElementByXpath(driver, common.ConcatText(kendoDropDownUnitPriceLocator, product.GetName()));
 
                 KendoUtil kendoUnitPriceDropdown = new KendoUtil(kendoUnitPriceDropdownElement);
 
                 kendoUnitPriceDropdown.ClickOnKendoElement();
 
-                IWebElement unitQuantityDiscountDropdownValueElement = common.GetWebElementByXpath(driver, ConcatText(unitQuantityDiscountDropdownValueLocator, product.UnitDiscount.Name));
+                IWebElement unitQuantityDiscountDropdownValueElement = common.GetWebElementByXpath(driver, common.ConcatText(unitQuantityDiscountDropdownValueLocator, product.UnitDiscount.Name));
                 kendoUnitPriceDropdown.SelectItem(unitQuantityDiscountDropdownValueElement);
 
                 //yearly
-                IWebElement kendoYearlyPriceDropdownElement = common.GetWebElementByXpath(driver, ConcatText(kendoDropDownYearlyPriceLocator, product.GetName()));
+                IWebElement kendoYearlyPriceDropdownElement = common.GetWebElementByXpath(driver, common.ConcatText(kendoDropDownYearlyPriceLocator, product.GetName()));
 
                 KendoUtil kendoYearlyPrice = new KendoUtil(kendoYearlyPriceDropdownElement);
 
                 kendoYearlyPrice.ClickOnKendoElement();
 
-                IWebElement yealyQuantityDiscountDropdownValueElement = common.GetWebElementByXpath(driver, ConcatText(quantityDiscountDropdownValueLocator, product.YearlyDiscount.Name));
+                IWebElement yealyQuantityDiscountDropdownValueElement = common.GetWebElementByXpath(driver, common.ConcatText(quantityDiscountDropdownValueLocator, product.YearlyDiscount.Name));
 
-                WaitUtil.VisibilityOfElement(driver, By.XPath(ConcatText(quantityDiscountDropdownDiscountPercentageLocator, product.YearlyDiscount.Name)));
+                WaitUtil.VisibilityOfElement(driver, By.XPath(common.ConcatText(quantityDiscountDropdownDiscountPercentageLocator, product.YearlyDiscount.Name)));
                
-                IWebElement yearlyDropdownDiscountPercentageElement = common.GetWebElementByXpath(driver, ConcatText(quantityDiscountDropdownDiscountPercentageLocator, product.YearlyDiscount.Name));
+                IWebElement yearlyDropdownDiscountPercentageElement = common.GetWebElementByXpath(driver, common.ConcatText(quantityDiscountDropdownDiscountPercentageLocator, product.YearlyDiscount.Name));
 
                 string yearlyDiscountPercentage = yearlyDropdownDiscountPercentageElement.Text;
 
@@ -149,14 +152,14 @@ namespace Telerik.Pages
         }
         private string GetElementTextForProduct(string locator, Product product)
         {
-            return common.GetWebElementByXpath(driver, ConcatText(locator, product.GetName())).Text;
+            return common.GetWebElementByXpath(driver, common.ConcatText(locator, product.GetName())).Text;
         }
       
 
 
         private double GetSavingPriceIfPresent(string locator, Product product)
         {
-            return common.IsElementPresent(driver, By.XPath(ConcatText(locator, product.GetName()))) 
+            return common.IsElementPresent(driver, By.XPath(common.ConcatText(locator, product.GetName()))) 
                                     ? common.GetDoubleWithRegex(GetElementTextForProduct(locator, product)) 
                                     : 0;
         }
@@ -175,7 +178,7 @@ namespace Telerik.Pages
 
         public void RemoveProduct(Product product)
         {
-            IWebElement element = common.GetWebElementByXpath(driver, ConcatText( deleteButtonLocator, product.GetName()));
+            IWebElement element = common.GetWebElementByXpath(driver, common.ConcatText( deleteButtonLocator, product.GetName()));
 
             element.Click();
             Products.DeleteProductByName(product.ProductType);
@@ -201,6 +204,11 @@ namespace Telerik.Pages
         public string GetEmptyShoppingCartMessage()
         {
             return EmptyShoppingCartMessageElement.Text.Trim();
+        }
+
+        public void ClickOnContinueButton()
+        {
+            common.ClickOnElement(ContinueButtonElement);
         }
     }
 }

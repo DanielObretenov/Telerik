@@ -15,9 +15,37 @@ namespace Telerik.Tests
         PurchasePage purchasePage;
         ShoppingCartPage shoppingPage;
 
+        [Test]
+        public void CheckDiscountsByAddingProductAndChangingQuantityWithOneProducts()
+        {
+            purchasePage = new PurchasePage(driverUtils.GetDriver());
+            shoppingPage = new ShoppingCartPage(driverUtils.GetDriver());
 
-       [Test]
-        public void CheckDiscountsByAddingProductAndChangingQuantity()
+            Product competeProduct = new Product(ProductTypesEnum.Complete, UnitDiscountsEnum.Seven, YearlyDiscountsEnum.Year4Plus);
+            ProductList productList = new ProductList(competeProduct);
+            shoppingPage.Products = productList;
+
+            purchasePage.AddProductsToCart(productList);
+            shoppingPage.FillInInitialProductInfo();
+            shoppingPage.SetQuantitiesForProducts();
+
+            foreach (var product in productList.GetProducts())
+            {
+                Assert.AreEqual(product.UnitDiscount.GetPriceAfterDiscount(), product.actualProduct.UnitLabelPrice);
+                Assert.AreEqual(product.UnitDiscount.GetDiscountPerItem(), product.actualProduct.UnitSavedLabelPrice);
+                Assert.AreEqual(product.YearlyDiscount.GetPriceAfterDiscountPerYear(), product.actualProduct.YearlyLabelPrice);
+                Assert.AreEqual(product.YearlyDiscount.GetTotalSavedPricePerItem(), product.actualProduct.YearlySavedLabelPrice);
+                Assert.AreEqual(product.TotalPriceAfterDiscounts(), product.actualProduct.ProductSubtotalLabelPrice);
+            }
+
+            Assert.AreEqual(productList.TotalLicenseBeforeDiscount(), shoppingPage.actualProducts.LicensesPricetWithoutDiscount);
+            Assert.AreEqual(productList.TotalMaintenanseAndSupportBeforeDiscount(), shoppingPage.actualProducts.MaintenanceSupportPricetWithoutDiscount);
+            Assert.AreEqual(productList.TotalDiscounts(), shoppingPage.actualProducts.TotalDiscounts);
+            Assert.AreEqual(productList.TotalPriceAfterDiscounts(), shoppingPage.actualProducts.TotalPrice);
+        }
+
+        [Test]
+        public void CheckDiscountsByAddingProductAndChangingQuantityWithTwoProducts()
         {
             purchasePage = new PurchasePage(driverUtils.GetDriver());
             shoppingPage = new ShoppingCartPage(driverUtils.GetDriver());
@@ -103,6 +131,5 @@ namespace Telerik.Tests
 
             Assert.AreEqual("Your shopping cart is empty!" ,shoppingPage.GetEmptyShoppingCartMessage());
         }
-
     }
 }

@@ -33,22 +33,20 @@ namespace Telerik.Common.Utils
             WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(timeoutSec));
             wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeSelected(element));
         }
-        public static void WaitForElementPresentBy(IWebDriver driver, By by)
+        public static void PresentElement(IWebDriver driver, By by)
         {
-            try
-            {
-                WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(20));
-                wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(by));
-            }
-            catch (TimeoutException te)
-            {
-                Assert.Fail("The element with selector {0} didn't appear. The exception was:\n {1}", by, te.ToString());
-            }
+
+            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(20));
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(by));
         }
 
         public static void WaitForLoaderToDisapear(IWebDriver driver)
         {
-            WaitForElementPresentBy(driver, By.CssSelector("div.panel-body div.loader-content:not(.is-loading)"));
+            PresentElement(driver, By.CssSelector("div.panel-body div.loader-content:not(.is-loading)"));
+        }
+        public static void WaitForLoaderToDisapear(IWebDriver driver,string loader)
+        {
+            PresentElement(driver, By.CssSelector(loader));
         }
 
     }

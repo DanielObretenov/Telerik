@@ -54,9 +54,15 @@ namespace Telerik.Common.Utils
             return driver.FindElement(By.XPath(xpath));
         }
 
-        public static string ConcatText(string text, string param)
+        public string ConcatText(string text, string param)
         {
            return string.Format(text, param);
+        }
+
+        public void ClearAndSendKeys(IWebElement element, string text)
+        {
+            element.Clear();
+            element.SendKeys(text);
         }
     }
 }
