@@ -44,7 +44,7 @@ namespace Telerik.Tests
             Assert.AreEqual("Order Summary", orderSummaryPage.GetSummaryPageTitle());
         }
 
-      //  [Test]
+        [Test]
         public void TestBillingAddressWithInvalidInfoAndSameHolderAddress()
         {
             contactInfoPage = new ContactInfoPage(driverUtils.GetDriver());
@@ -62,7 +62,7 @@ namespace Telerik.Tests
    
 
 
-        //   [Test]
+        [Test]
         public void TestInvalidCompanyValidationError()
         {
             contactInfoPage = new ContactInfoPage(driverUtils.GetDriver());
@@ -78,7 +78,7 @@ namespace Telerik.Tests
 
             Assert.AreEqual("Company is required", contactInfoPage.GetCompanyValidationError());
         }
-        //[Test]
+        [Test]
         public void TestInvalidEmailValidationError()
         {
             contactInfoPage = new ContactInfoPage(driverUtils.GetDriver());
