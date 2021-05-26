@@ -45,21 +45,23 @@ namespace Telerik.Tests
         }
 
         [Test]
-        public void TestBillingAddressWithInvalidInfoAndSameHolderAddress()
+        public void TestBillingAddressWithInvalidVatID()
         {
             contactInfoPage = new ContactInfoPage(driverUtils.GetDriver());
             shoppingCartPage = new ShoppingCartPage(driverUtils.GetDriver());
-            country = CountryEnum.Albania;
             Address address = new Address(addressInfo, country, city, zip);
             BillingInformation billing = new BillingInformation(firstName, lastName, email, company, phone, address);
+            billing.VatID = VATID;
             driverUtils.NavigateToUrl(AppSettingsReaderUtils.GetKey("urlShoppingCart"));
             shoppingCartPage.ClickOnContinueButton();
             contactInfoPage.AcceptCookies();
             contactInfoPage.AddBillingInformation(billing);
 
+            Assert.AreEqual("Invalid VAT ID", contactInfoPage.GetVatIdValidatonError());
+
         }
 
-   
+
 
 
         [Test]
